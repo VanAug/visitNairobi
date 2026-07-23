@@ -7,12 +7,12 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://visit-nairobi.example"),
-  title: { default: "Visit Nairobi — Your Gateway to Africa", template: "%s | Visit Nairobi" },
-  description: "Discover Nairobi’s wildlife, culture, food, events, business, innovation and practical travel guidance.",
+  title: { default: "Visit Nairobi Kenya – The Gateway to Africa | Tourism, Investment & Business", template: "%s | Visit Nairobi" },
+  description: "Visit Nairobi Kenya – The Gateway to Africa. Discover world-class tourism, investment opportunities, business expansion, culture, innovation, real estate, events, and unforgettable experiences in one of Africa's fastest-growing cities.",
   keywords: ["Nairobi travel", "Visit Nairobi", "Nairobi business", "Nairobi events", "Kenya tourism"],
   openGraph: {
-    title: "Visit Nairobi — Your Gateway to Africa",
-    description: "Where nature, culture, innovation and opportunity live side by side.",
+    title: "Visit Nairobi Kenya – The Gateway to Africa | Tourism, Investment & Business",
+    description: "Visit Nairobi Kenya – The Gateway to Africa. Discover world-class tourism, investment opportunities, business expansion, culture, innovation, real estate, events, and unforgettable experiences in one of Africa's fastest-growing cities.",
     type: "website",
     locale: "en_KE",
     images: [{ url: "/og.png", width: 1733, height: 907, alt: "Visit Nairobi — Your Gateway to Africa" }],
