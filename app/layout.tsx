@@ -15,9 +15,9 @@ export const metadata: Metadata = {
     description: "Visit Nairobi Kenya – The Gateway to Africa. Discover world-class tourism, investment opportunities, business expansion, culture, innovation, real estate, events, and unforgettable experiences in one of Africa's fastest-growing cities.",
     type: "website",
     locale: "en_KE",
-    images: [{ url: "/og.png", width: 1733, height: 907, alt: "Visit Nairobi — Your Gateway to Africa" }],
+    images: [{ url: "/og.jpg", width: 1280, height: 853, alt: "Nairobi skyline at sunset" }],
   },
-  twitter: { card: "summary_large_image", images: ["/og.png"] },
+  twitter: { card: "summary_large_image", images: ["/og.jpg"] },
 };
 
 export const viewport: Viewport = { themeColor: "#2833E8", colorScheme: "light" };

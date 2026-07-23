@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const destination = destinations.find(x => x.slug === slug[slug.length-1]);
   const title = record?.title || destination?.title || slug[slug.length - 1].replaceAll("-"," ").replace(/\b\w/g, x => x.toUpperCase());
   const description = record?.summary || destination?.intro || `Explore ${title} with Visit Nairobi — Your Gateway to Africa.`;
-  const image = record?.image || destination?.image || "/og.png";
+  const image = record?.image || destination?.image || "/og.jpg";
   return {
     title,description,alternates:{ canonical:`/${slug.join("/")}` },
     openGraph:{ title,description,images:[image],type:slug[0] === "stories" ? "article" : "website" },
