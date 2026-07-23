@@ -15,7 +15,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply site-creator-d1 --local --config wrangler.dev.jsonc",
     "db:migrate:remote": "wrangler d1 migrations apply visit-nairobi-db --remote --config wrangler.deploy.jsonc",
-    "deploy": "npm run build && wrangler deploy --config wrangler.deploy.jsonc"
+    "deploy": "NEXT_PUBLIC_SITE_URL=https://visitnairobikenya.com npm run build && wrangler deploy --config wrangler.deploy.jsonc"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
