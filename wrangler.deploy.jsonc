@@ -1,0 +1,41 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "visit-nairobi",
+  // Waya Cloudflare Account — pinned explicitly since this login has access to
+  // multiple accounts and wrangler would otherwise prompt interactively (which
+  // hangs in non-interactive/CI contexts) to disambiguate.
+  "account_id": "64e7d31468a7ab464bdc3a458f76e146",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  // vinext build (npm run build) produces this bundle already wired to worker/index.ts —
+  // do not point this at worker/index.ts directly, wrangler's own bundler can't build it.
+  "main": "./dist/server/index.js",
+  "no_bundle": true,
+  // no_bundle means wrangler won't discover the RSC/SSR manifest files that
+  // dist/server/index.js imports relatively (e.g. __vite_rsc_assets_manifest.js)
+  // unless told to treat them as additional modules to upload alongside main.
+  "rules": [
+    { "type": "ESModule", "globs": ["**/*.js", "**/*.mjs"] }
+  ],
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "visit-nairobi-db", "database_id": "dae60976-ff9e-4a0f-b8c1-8d7c361a533c", "migrations_dir": "./drizzle" }
+  ],
+  "r2_buckets": [
+    { "binding": "MEDIA", "bucket_name": "visit-nairobi-media" }
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://visitnairobikenya.com"
+  },
+  "routes": [
+    { "pattern": "visitnairobikenya.com", "custom_domain": true },
+    { "pattern": "www.visitnairobikenya.com", "custom_domain": true }
+  ],
+  "workers_dev": true
+}

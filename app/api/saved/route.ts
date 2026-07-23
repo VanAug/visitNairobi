@@ -1,10 +1,10 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { savedItems } from "../../../db/schema";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { getSessionUser } from "../../auth";
 
 export async function GET() {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return Response.json({ error:"Sign in required" }, { status:401 });
   const db = await getDb();
   const items = await db.select().from(savedItems).where(eq(savedItems.userEmail, identity.email));
@@ -12,7 +12,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return Response.json({ error:"Sign in required" }, { status:401 });
   const { slug, itineraryDay } = await request.json() as { slug?:string; itineraryDay?:number };
   if (!slug || slug.length > 200) return Response.json({ error:"Valid content slug required" }, { status:400 });
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return Response.json({ error:"Sign in required" }, { status:401 });
   const slug = new URL(request.url).searchParams.get("slug");
   if (!slug) return Response.json({ error:"Slug required" }, { status:400 });

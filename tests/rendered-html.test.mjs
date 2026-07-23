@@ -58,14 +58,24 @@ test("protected data APIs require identity", async () => {
 test("all rendered internal links resolve", async () => {
   const sourcePaths = ["/","/things-to-do","/food-and-drink","/hotels","/nightlife","/shopping","/destinations","/stories","/business","/plan"];
   const html = (await Promise.all(sourcePaths.map(async path => (await get(path)).text()))).join("\n");
-  const paths = [...new Set([...html.matchAll(/href="(\/[^"#]*)"/g)].map(match => match[1]))]
-    .filter(path => !path.startsWith("/signin-with-chatgpt") && !path.startsWith("/signout-with-chatgpt"));
+  const paths = [...new Set([...html.matchAll(/href="(\/[^"#]*)"/g)].map(match => match[1]))];
   const responses = [];
   for (let i=0;i<paths.length;i+=8) {
     responses.push(...await Promise.all(paths.slice(i,i+8).map(async path => [path,(await get(path)).status])));
   }
   const broken = responses.filter(([,status]) => status !== 200);
   assert.deepEqual(broken,[]);
+});
+
+test("magic link request rejects an invalid email", async () => {
+  const response = await fetch(`${base}/api/auth/request`, { method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({ email:"not-an-email" }) });
+  assert.equal(response.status, 400);
+});
+
+test("magic link callback rejects a missing token", async () => {
+  const response = await fetch(`${base}/api/auth/callback`, { redirect:"manual" });
+  assert.equal(response.status, 302);
+  assert.match(response.headers.get("location") || "", /\/signin/);
 });
 
 test("form validation rejects incomplete submissions", async () => {

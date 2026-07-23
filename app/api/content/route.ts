@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { auditLogs, contentItems } from "../../../db/schema";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { getSessionUser } from "../../auth";
 
 export async function PATCH(request: Request) {
-  const actor = await getChatGPTUser();
+  const actor = await getSessionUser();
   if (!actor) return Response.json({ error:"Sign in required" }, { status:401 });
   const body = await request.json() as { id?:number;status?:string;reason?:string };
   const statuses = ["draft","in review","approved","scheduled","published","archived"];

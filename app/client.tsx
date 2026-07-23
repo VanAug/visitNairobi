@@ -90,6 +90,28 @@ export function SmartForm({ kind = "General enquiry", compact = false }: { kind?
   </form>;
 }
 
+export function MagicLinkForm({ mode = "signin", returnTo = "/account" }: { mode?: "signin" | "register"; returnTo?: string }) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle"|"sending"|"sent"|"error">("idle");
+  const [devLink, setDevLink] = useState<string | null>(null);
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault(); setStatus("sending");
+    try {
+      const r = await fetch("/api/auth/request", { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({ email, return_to:returnTo }) });
+      if (!r.ok) throw new Error();
+      const data = await r.json().catch(() => ({}));
+      setDevLink(data?.url || null);
+      setStatus("sent");
+    } catch { setStatus("error"); }
+  }
+  if (status === "sent") return <div className="form-success" role="status"><strong>Check your email.</strong><p>We’ve sent a secure sign-in link to {email}. It expires in 15 minutes.</p>{devLink && <p className="small"><a href={devLink}>Continue (no email provider configured)</a></p>}</div>;
+  return <form className="account-form" onSubmit={submit}>
+    <label><span>Email address</span><input type="email" required value={email} onChange={e => setEmail(e.target.value)} autoComplete="email"/></label>
+    <button className="button dark" disabled={status==="sending"}>{status==="sending" ? "Sending…" : mode === "register" ? "Send my sign-in link" : "Email me a sign-in link"}</button>
+    {status === "error" && <p className="form-error" role="alert">Something went wrong. Please try again.</p>}
+  </form>;
+}
+
 export function CookieNotice() {
   const [visible,setVisible] = useState(false);
   useEffect(() => setVisible(!localStorage.getItem("vn-consent")),[]);
@@ -160,6 +182,10 @@ export function AccountManager() {
     if (!confirm("Delete your Visit Nairobi account data and saved items? This cannot be undone.")) return;
     const r=await fetch("/api/me",{method:"DELETE"});setState(r.ok ? "Your Visit Nairobi account data has been deleted." : "Account deletion could not be completed.");
   }
-  if (state==="signin") return <div className="account-panel"><h2>Sign in to sync</h2><p>Your on-device saved items remain available. Sign in to sync them and manage your account data.</p><a className="button dark" href="/signin-with-chatgpt?return_to=%2Faccount">Sign in securely</a><a href="/register">Create an account</a></div>;
-  return <div className="account-panel"><h2>Account controls</h2>{profile ? <form onSubmit={save} className="account-form"><p><strong>{profile.name || profile.email}</strong><br/>{profile.email}</p><label className="consent"><input name="newsletterOptIn" type="checkbox" defaultChecked={profile.newsletterOptIn}/><span>Send me useful Visit Nairobi updates.</span></label><label><span>Accessibility preferences</span><textarea name="accessibilityPreferences" defaultValue={profile.accessibilityPreferences} rows={3}/></label><button className="button dark">Save preferences</button></form> : <p>{state}</p>}<p className="account-state" role="status">{profile ? state : ""}</p>{profile && <><button className="text-link" onClick={exportData}>Export my data</button><button className="text-link danger" onClick={deleteData}>Delete my account</button><a className="text-link" href="/signout-with-chatgpt?return_to=%2F">Sign out of all sessions</a></>}</div>;
+  async function signOut() {
+    await fetch("/api/auth/signout",{method:"POST"}).catch(() => undefined);
+    location.href="/";
+  }
+  if (state==="signin") return <div className="account-panel"><h2>Sign in to sync</h2><p>Your on-device saved items remain available. Sign in to sync them and manage your account data.</p><MagicLinkForm mode="signin" returnTo="/account"/></div>;
+  return <div className="account-panel"><h2>Account controls</h2>{profile ? <form onSubmit={save} className="account-form"><p><strong>{profile.name || profile.email}</strong><br/>{profile.email}</p><label className="consent"><input name="newsletterOptIn" type="checkbox" defaultChecked={profile.newsletterOptIn}/><span>Send me useful Visit Nairobi updates.</span></label><label><span>Accessibility preferences</span><textarea name="accessibilityPreferences" defaultValue={profile.accessibilityPreferences} rows={3}/></label><button className="button dark">Save preferences</button></form> : <p>{state}</p>}<p className="account-state" role="status">{profile ? state : ""}</p>{profile && <><button className="text-link" onClick={exportData}>Export my data</button><button className="text-link danger" onClick={deleteData}>Delete my account</button><button className="text-link" onClick={signOut}>Sign out</button></>}</div>;
 }

@@ -2,10 +2,10 @@ import { count, desc } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { contentItems, newsletterSubscribers, submissions, users } from "../../../db/schema";
 import { seedContent } from "../../../db/seed";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { getSessionUser } from "../../auth";
 
 async function authorize() {
-  const user = await getChatGPTUser();
+  const user = await getSessionUser();
   if (!user) return null;
   const allowed = (process.env.ADMIN_EMAILS || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
   return !allowed.length || allowed.includes(user.email.toLowerCase()) ? user : null;

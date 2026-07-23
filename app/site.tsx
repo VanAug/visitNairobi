@@ -1,4 +1,4 @@
-import { AccountManager, CookieNotice, Directory, MobileMenu, SaveButton, SmartForm, ItineraryBuilder, AdminWorkflow } from "./client";
+import { AccountManager, CookieNotice, Directory, MagicLinkForm, MobileMenu, SaveButton, SmartForm, ItineraryBuilder, AdminWorkflow } from "./client";
 import { itineraries, neighbourhoods, practical, sectors, type Card } from "./content";
 import { allDirectoryItems, destinations, experiences, foodVenues, hotels, mediaCredits, nightlife, shopping, stories } from "./expanded-content";
 
@@ -175,7 +175,7 @@ function AccountPage() {
 }
 
 function SignInPage({ register = false }: { register?: boolean }) {
-  return <Shell><section className="auth"><div className="auth-art"><span>✦</span><h1>{register ? "Make Nairobi yours." : "Welcome back."}</h1><p>Save places, build an itinerary and control your preferences.</p></div><div className="auth-box"><p className="kicker">{register ? "Create an account" : "Secure sign in"}</p><h2>{register ? "Start planning." : "Continue your journey."}</h2><p>Visit Nairobi uses secure identity sign-in. Your password is never collected or stored by this website.</p><a className="button dark" href="/signin-with-chatgpt?return_to=%2Faccount">{register ? "Create my account" : "Sign in securely"}</a><p className="small">By continuing, you agree to the <a href="/terms">terms</a> and acknowledge the <a href="/privacy">privacy policy</a>.</p></div></section></Shell>;
+  return <Shell><section className="auth"><div className="auth-art"><span>✦</span><h1>{register ? "Make Nairobi yours." : "Welcome back."}</h1><p>Save places, build an itinerary and control your preferences.</p></div><div className="auth-box"><p className="kicker">{register ? "Create an account" : "Secure sign in"}</p><h2>{register ? "Start planning." : "Continue your journey."}</h2><p>We’ll email you a secure sign-in link — no password to remember or store.</p><MagicLinkForm mode={register ? "register" : "signin"} returnTo="/account"/><p className="small">By continuing, you agree to the <a href="/terms">terms</a> and acknowledge the <a href="/privacy">privacy policy</a>.</p></div></section></Shell>;
 }
 
 function AdminPage() {

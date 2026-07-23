@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { newsletterSubscribers, savedItems, users } from "../../../db/schema";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { getSessionUser } from "../../auth";
 
 export async function GET(request: Request) {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return Response.json({ error:"Sign in required" }, { status:401 });
   const db = await getDb();
   let profile = await db.select().from(users).where(eq(users.email, identity.email)).get();
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return Response.json({ error:"Sign in required" }, { status:401 });
   const body = await request.json().catch(() => ({})) as { newsletterOptIn?:boolean; accessibilityPreferences?:string };
   const db = await getDb();
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE() {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return Response.json({ error:"Sign in required" }, { status:401 });
   const db = await getDb();
   await db.batch([
